@@ -1,5 +1,6 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
+import { generateText } from 'ai';
 import {
   concatenateProductImages,
   imageToBase64,
@@ -15,7 +16,8 @@ export interface GenerateFitRequest {
 export interface GenerateFitResponse {
   success: boolean;
   data?: {
-    concatenatedImage: string; // base64 data URL
+    concatenatedImage: string; // base64 data URL - original concatenation
+    generatedImage: string; // base64 data URL - AI generated lifestyle image
     metadata: {
       width: number;
       height: number;
@@ -28,6 +30,8 @@ export interface GenerateFitResponse {
   };
   error?: string;
 }
+
+console.log('AI Gateway API key available:', !!process.env.AI_GATEWAY_API_KEY);
 
 export async function POST(
   request: NextRequest
@@ -100,11 +104,63 @@ export async function POST(
       concatenationResult.metadata.format
     );
 
+    console.log('Starting AI generation with Gemini...');
+
+    // Generate lifestyle image with AI
+    const result = await generateText({
+      model: 'gemini-2.5-flash-image-preview',
+      providerOptions: {
+        google: {
+          responseModalities: ['TEXT', 'IMAGE'],
+        },
+      },
+      messages: [
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'text',
+              text: 'Assemble the outfit and put it on a men, lifestyle image.',
+            },
+            {
+              type: 'image',
+              image: base64Image,
+            },
+          ],
+        },
+      ],
+    });
+
+    console.log('AI generation completed');
+
+    const imageFiles = result.files.filter((f) =>
+      f.mediaType.startsWith('image/')
+    );
+    console.log('Image files found:', imageFiles.length || 0);
+
+    if (imageFiles.length === 0) {
+      console.log('[v0] No image files generated');
+      return NextResponse.json(
+        { success: false, error: 'No image was generated' },
+        { status: 500 }
+      );
+    }
+
+    const generatedImage = imageFiles[0];
+    console.log('Generated image mediaType:', generatedImage.mediaType);
+    console.log('Generated image has base64:', !!generatedImage.base64);
+
+    const generatedBase64Image = `data:${generatedImage.mediaType};base64,${generatedImage.base64}`;
+    console.log('[v0] Base64 image created, length:', base64Image.length);
+
+    console.log('[v0] Successfully generated image');
+
     // Prepare response
     const response: GenerateFitResponse = {
       success: true,
       data: {
         concatenatedImage: base64Image,
+        generatedImage: generatedBase64Image,
         metadata: {
           ...concatenationResult.metadata,
           productCount: products.length,

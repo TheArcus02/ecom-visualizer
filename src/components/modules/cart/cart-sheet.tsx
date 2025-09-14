@@ -36,7 +36,8 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
   const generateFitMutation = useGenerateFit({
     onSuccess: (data) => {
       if (data.success && data.data) {
-        setGeneratedImage(data.data.concatenatedImage);
+        // Use the AI-generated image instead of concatenated image
+        setGeneratedImage(data.data.generatedImage);
         setShowPreviewDialog(true);
       }
     },
