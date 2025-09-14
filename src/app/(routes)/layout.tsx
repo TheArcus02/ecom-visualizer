@@ -1,3 +1,6 @@
+import { SiteHeader } from '~/components/layout/site-header';
+import { SiteFooter } from '~/components/layout/site-footer';
+
 export default function AppLayout({
   children,
 }: Readonly<{
@@ -5,9 +8,9 @@ export default function AppLayout({
 }>) {
   return (
     <div className='bg-background relative z-10 flex min-h-svh flex-col'>
-      {/* <SiteHeader /> */}
+      <SiteHeader />
       <main className='flex flex-1 flex-col'>{children}</main>
-      {/* <SiteFooter /> */}
+      <SiteFooter />
     </div>
   );
 }
