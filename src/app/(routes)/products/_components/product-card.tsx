@@ -65,18 +65,6 @@ export function ProductCard({ product }: { product: Product }) {
         <p className='text-sm text-muted-foreground line-clamp-2'>
           {product.description}
         </p>
-
-        {/* Add to Cart Button (Bottom) */}
-        <button
-          onClick={handleAddToCart}
-          className={`w-full py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
-            inCart
-              ? 'bg-foreground text-background hover:bg-foreground/90'
-              : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
-          }`}
-        >
-          {inCart ? `In Cart (${quantity})` : 'Add to Cart'}
-        </button>
       </div>
     </div>
   );

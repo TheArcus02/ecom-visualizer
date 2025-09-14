@@ -8,6 +8,8 @@ export interface CartItem {
 
 interface CartStore {
   items: CartItem[];
+  isSheetOpen: boolean;
+  setSheetOpen: (open: boolean) => void;
   addItem: (productId: string) => void;
   removeItem: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
@@ -21,6 +23,11 @@ export const useCartStore = create<CartStore>()(
   persist(
     (set, get) => ({
       items: [],
+      isSheetOpen: false,
+
+      setSheetOpen: (open: boolean) => {
+        set({ isSheetOpen: open });
+      },
 
       addItem: (productId: string) => {
         set((state) => {
@@ -33,10 +40,12 @@ export const useCartStore = create<CartStore>()(
                   ? { ...item, quantity: item.quantity + 1 }
                   : item
               ),
+              isSheetOpen: true,
             };
           } else {
             return {
               items: [...state.items, { id: productId, quantity: 1 }],
+              isSheetOpen: true,
             };
           }
         });
