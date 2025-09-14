@@ -16,7 +16,7 @@ export function ProductCard({ product }: { product: Product }) {
   };
 
   return (
-    <div className='group cursor-pointer'>
+    <article className='group cursor-pointer'>
       <div className='aspect-[3/4] relative overflow-hidden rounded-lg bg-secondary mb-4'>
         <Image
           src={product.imageUrl}
@@ -67,6 +67,6 @@ export function ProductCard({ product }: { product: Product }) {
           {product.description}
         </p>
       </div>
-    </div>
+    </article>
   );
 }

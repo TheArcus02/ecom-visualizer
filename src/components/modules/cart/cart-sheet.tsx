@@ -1,7 +1,14 @@
 'use client';
 
 import Image from 'next/image';
-import { PlusIcon, MinusIcon, ShoppingBagIcon, Trash2Icon } from 'lucide-react';
+import { useState } from 'react';
+import {
+  PlusIcon,
+  MinusIcon,
+  ShoppingBagIcon,
+  Trash2Icon,
+  Loader2,
+} from 'lucide-react';
 import { useCartStore } from '~/lib/stores/cart-store';
 import {
   getCartItemsWithDetails,
@@ -17,6 +24,7 @@ import {
   SheetFooter,
 } from '~/components/ui/sheet';
 import type { Product } from '~/lib/constants/products';
+import { useGenerateFit } from '~/hooks/use-generate-fit';
 
 interface CartSheetProps {
   open: boolean;
@@ -27,6 +35,26 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
   const { items, updateQuantity, removeItem } = useCartStore();
   const cartItemsWithDetails = getCartItemsWithDetails(items);
   const total = calculateCartTotal(items);
+  const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+
+  const generateFitMutation = useGenerateFit({
+    onSuccess: (data) => {
+      if (data.success && data.data) {
+        setGeneratedImage(data.data.concatenatedImage);
+      }
+    },
+    onError: (error) => {
+      alert(`Failed to generate fit: ${error.message}`);
+    },
+  });
+
+  const handleGenerateFit = () => {
+    if (items.length === 0) {
+      console.warn('No items in cart to generate fit');
+      return;
+    }
+    generateFitMutation.mutate(items);
+  };
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -66,6 +94,29 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
           )}
         </div>
 
+        {/* Generated Image Display */}
+        {generatedImage ? (
+          <div className='py-4 border-t'>
+            <h4 className='font-medium text-foreground mb-3'>
+              Your Generated Outfit
+            </h4>
+            <div className='relative aspect-square w-full max-w-sm mx-auto rounded-lg overflow-hidden bg-secondary'>
+              <Image
+                src={generatedImage}
+                alt='Generated outfit visualization'
+                fill
+                className='object-cover'
+              />
+            </div>
+            <button
+              onClick={() => setGeneratedImage(null)}
+              className='mt-3 text-sm text-muted-foreground hover:text-foreground transition-colors w-full text-center'
+            >
+              Close Preview
+            </button>
+          </div>
+        ) : null}
+
         {cartItemsWithDetails.length > 0 && (
           <SheetFooter className='gap-4 pt-4 border-t'>
             <div className='flex items-center justify-between w-full'>
@@ -77,13 +128,18 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
 
             <div className='grid grid-cols-1 gap-3 w-full'>
               <button
-                className='w-full bg-foreground text-background hover:bg-foreground/90 py-3 px-4 rounded-lg font-medium transition-colors'
-                onClick={() => {
-                  // TODO: Implement visualization logic
-                  console.log('Visualize your fit');
-                }}
+                className='w-full bg-foreground text-background hover:bg-foreground/90 py-3 px-4 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2'
+                onClick={handleGenerateFit}
+                disabled={generateFitMutation.isPending}
               >
-                Visualize Your Fit
+                {generateFitMutation.isPending ? (
+                  <>
+                    <Loader2 className='w-4 h-4 animate-spin' />
+                    Generating...
+                  </>
+                ) : (
+                  'Visualize Your Fit'
+                )}
               </button>
 
               <button
