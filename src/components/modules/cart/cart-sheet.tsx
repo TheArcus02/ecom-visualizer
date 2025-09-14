@@ -21,12 +21,10 @@ import { OutfitPreviewDialog } from './outfit-preview-dialog';
 import { CartItem } from './cart-item';
 import { Button } from '~/components/ui/button';
 
-interface CartSheetProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
+export function CartSheet() {
+  const open = useCartStore((state) => state.isSheetOpen);
+  const onOpenChange = useCartStore((state) => state.setSheetOpen);
 
-export function CartSheet({ open, onOpenChange }: CartSheetProps) {
   const { items, updateQuantity, removeItem } = useCartStore();
   const cartItemsWithDetails = getCartItemsWithDetails(items);
   const total = calculateCartTotal(items);

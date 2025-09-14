@@ -27,6 +27,7 @@ export function useGenerateFit(options?: UseGenerateFitOptions) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return response.json();
     },
     onSuccess: (data) => {
