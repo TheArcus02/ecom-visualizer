@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { ShoppingBag, Trash2, Minus, Plus } from 'lucide-react';
+import { PlusIcon, MinusIcon, ShoppingBagIcon, Trash2Icon } from 'lucide-react';
 import { useCartStore } from '~/lib/stores/cart-store';
 import {
   getCartItemsWithDetails,
@@ -32,7 +32,7 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side='right' className='w-full sm:max-w-lg'>
         <SheetHeader>
-          <SheetTitle>Your Outfit ({items.length} items)</SheetTitle>
+          <SheetTitle>Your Outfit ({items.length})</SheetTitle>
           <SheetDescription>
             Review your selected items and create your perfect look
           </SheetDescription>
@@ -41,7 +41,7 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
         <div className='flex-1 overflow-auto py-4'>
           {cartItemsWithDetails.length === 0 ? (
             <div className='flex flex-col items-center justify-center py-12 text-center'>
-              <ShoppingBag className='w-12 h-12 text-muted-foreground mb-4' />
+              <ShoppingBagIcon className='w-12 h-12 text-muted-foreground mb-4' />
               <h3 className='font-semibold text-foreground mb-2'>
                 Your cart is empty
               </h3>
@@ -69,8 +69,9 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
         {cartItemsWithDetails.length > 0 && (
           <SheetFooter className='gap-4 pt-4 border-t'>
             <div className='flex items-center justify-between w-full'>
+              <span className='font-semibold text-lg'>Total:</span>
               <span className='font-semibold text-lg'>
-                Total: {formatPrice(total)}
+                {formatPrice(total)}
               </span>
             </div>
 
@@ -114,7 +115,7 @@ function CartItem({
   onRemove: () => void;
 }) {
   return (
-    <div className='flex items-start gap-4 p-4 border rounded-lg'>
+    <div className='flex items-start gap-4 p-4'>
       <div className='aspect-[3/4] w-16 relative overflow-hidden rounded-md bg-secondary flex-shrink-0'>
         <Image
           src={product.imageUrl}
@@ -137,7 +138,7 @@ function CartItem({
           onClick={onRemove}
           className='text-muted-foreground hover:text-foreground p-1'
         >
-          <Trash2 className='w-4 h-4' />
+          <Trash2Icon className='w-4 h-4' />
         </button>
 
         <div className='flex items-center gap-2'>
@@ -146,7 +147,7 @@ function CartItem({
             disabled={quantity <= 1}
             className='w-8 h-8 rounded-full border border-border flex items-center justify-center hover:bg-secondary disabled:opacity-50 disabled:cursor-not-allowed'
           >
-            <Minus className='w-3 h-3' />
+            <MinusIcon className='w-3 h-3' />
           </button>
 
           <span className='w-8 text-center text-sm font-medium'>
@@ -157,11 +158,10 @@ function CartItem({
             onClick={() => onUpdateQuantity(quantity + 1)}
             className='w-8 h-8 rounded-full border border-border flex items-center justify-center hover:bg-secondary'
           >
-            <Plus className='w-3 h-3' />
+            <PlusIcon className='w-3 h-3' />
           </button>
         </div>
       </div>
     </div>
   );
 }
-
