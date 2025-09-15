@@ -4,30 +4,16 @@ import Link from 'next/link';
 import { ShoppingCart } from 'lucide-react';
 import { useCartStore } from '~/lib/stores/cart-store';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import { cn } from '~/lib/utils';
+import { useScroll } from '~/hooks/use-scroll';
 
 export function SiteHeader() {
   const { getTotalItems, setSheetOpen } = useCartStore();
   const totalItems = getTotalItems();
   const pathname = usePathname();
-  const [isScrolled, setIsScrolled] = useState(false);
+  const isScrolled = useScroll(10);
 
   const isLandingPage = pathname === '/';
-
-  useEffect(() => {
-    if (!isLandingPage) return;
-
-    const handleScroll = () => {
-      const scrollPosition = window.scrollY;
-      setIsScrolled(scrollPosition > 10);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Check initial scroll position
-
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [isLandingPage]);
 
   const handleCartClick = () => {
     setSheetOpen(true);
