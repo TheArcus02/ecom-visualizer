@@ -3,23 +3,59 @@
 import Link from 'next/link';
 import { ShoppingCart } from 'lucide-react';
 import { useCartStore } from '~/lib/stores/cart-store';
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { cn } from '~/lib/utils';
 
 export function SiteHeader() {
   const { getTotalItems, setSheetOpen } = useCartStore();
   const totalItems = getTotalItems();
+  const pathname = usePathname();
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  const isLandingPage = pathname === '/';
+
+  useEffect(() => {
+    if (!isLandingPage) return;
+
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      setIsScrolled(scrollPosition > 10);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Check initial scroll position
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isLandingPage]);
 
   const handleCartClick = () => {
     setSheetOpen(true);
   };
 
+  const isTransparent = isLandingPage && !isScrolled;
+  const headerBg = isTransparent ? 'bg-transparent' : 'bg-background';
+  const borderStyle = isTransparent ? 'border-transparent' : 'border-b';
+
   return (
-    <header className='sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
+    <header
+      className={cn(
+        'sticky top-0 z-50 w-full transition-all duration-300',
+        headerBg,
+        borderStyle
+      )}
+    >
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
         <div className='flex h-16 items-center justify-between'>
           <div className='flex-1'>
             <Link
               href='/products'
-              className='text-sm font-medium text-muted-foreground hover:text-foreground transition-colors'
+              className={cn(
+                'text-sm font-medium transition-colors',
+                isTransparent
+                  ? 'text-white/80 hover:text-white'
+                  : 'text-muted-foreground hover:text-foreground'
+              )}
             >
               Products
             </Link>
@@ -28,7 +64,12 @@ export function SiteHeader() {
           <div className='flex-1 flex justify-center'>
             <Link
               href='/'
-              className='font-light tracking-wide text-xl text-foreground hover:text-foreground/80 transition-colors uppercase'
+              className={cn(
+                'font-light tracking-wide text-xl transition-colors uppercase',
+                isTransparent
+                  ? 'text-white hover:text-white/80'
+                  : 'text-foreground hover:text-foreground/80'
+              )}
             >
               Thalorra
             </Link>
@@ -37,11 +78,23 @@ export function SiteHeader() {
           <div className='flex-1 flex justify-end'>
             <button
               onClick={handleCartClick}
-              className='relative p-2 text-muted-foreground hover:text-foreground transition-colors'
+              className={cn(
+                'relative p-2 transition-colors',
+                isTransparent
+                  ? 'text-white/80 hover:text-white'
+                  : 'text-muted-foreground hover:text-foreground'
+              )}
             >
               <ShoppingCart className='w-5 h-5' />
               {totalItems > 0 && (
-                <span className='absolute -top-1 -right-1 bg-foreground text-background text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium'>
+                <span
+                  className={cn(
+                    'absolute -top-1 -right-1 text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium',
+                    isTransparent
+                      ? 'bg-white text-black'
+                      : 'bg-foreground text-background'
+                  )}
+                >
                   {totalItems}
                 </span>
               )}

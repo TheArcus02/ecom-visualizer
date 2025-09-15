@@ -1,18 +1,25 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '~/components/ui/button';
 
 export function Hero() {
   return (
-    <section className='min-h-[90ch] relative bg-gradient-to-r from-gray-900 to-gray-700 text-white flex flex-col items-center justify-center'>
-      <div className='container mx-auto px-4 py-24 text-center'>
-        <h1 className='text-4xl md:text-6xl font-bold mb-6'>
-          Visualize Your Perfect Outfit
+    <section className='max-h-screen w-full aspect-video relative flex flex-col justify-end -mt-16 pt-16'>
+      <Image
+        src='/hero.png'
+        alt='Hero Image'
+        fill
+        className='opacity object-cover z-0'
+        priority
+      />
+      <div className='container mx-auto px-4 py-24 z-10'>
+        <h1 className='text-4xl max-w-2xl md:text-6xl text-white font-semibold'>
+          Visualize your dream outfit
         </h1>
-        <p className='text-lg mb-8 text-muted max-w-3xl mx-auto'>
-          Create stunning outfit combinations with AI. Select your favorite
-          pieces, generate preview images, and shop the complete look.
+        <p className='text-lg text-white/90 max-w-md mt-2'>
+          Create stunning outfit combinations from our collections with AI.
         </p>
-        <Button asChild size='lg' variant='secondary'>
+        <Button asChild size='lg' variant='secondary' className='mt-6'>
           <Link href='/products'>SHOP NOW</Link>
         </Button>
       </div>
