@@ -4,7 +4,9 @@ export function SiteFooter() {
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12'>
         <div className='grid grid-cols-1 md:grid-cols-4 gap-8'>
           <div className='space-y-4'>
-            <h3 className='font-semibold text-lg text-foreground'>Fashion Visualizer</h3>
+            <h3 className='font-light tracking-wide text-xl text-foreground'>
+              Thalorra
+            </h3>
             <p className='text-sm text-muted-foreground leading-relaxed'>
               AI-powered outfit visualization for the perfect look.
             </p>
@@ -13,7 +15,10 @@ export function SiteFooter() {
             <h4 className='font-medium text-foreground'>Shop</h4>
             <ul className='space-y-3 text-sm text-muted-foreground'>
               <li>
-                <a href='/products' className='hover:text-foreground transition-colors'>
+                <a
+                  href='/products'
+                  className='hover:text-foreground transition-colors'
+                >
                   All Products
                 </a>
               </li>
@@ -47,17 +52,26 @@ export function SiteFooter() {
             <h4 className='font-medium text-foreground'>Features</h4>
             <ul className='space-y-3 text-sm text-muted-foreground'>
               <li>
-                <a href='/outfit' className='hover:text-foreground transition-colors'>
+                <a
+                  href='/outfit'
+                  className='hover:text-foreground transition-colors'
+                >
                   My Outfit
                 </a>
               </li>
               <li>
-                <a href='/generate' className='hover:text-foreground transition-colors'>
+                <a
+                  href='/generate'
+                  className='hover:text-foreground transition-colors'
+                >
                   AI Preview
                 </a>
               </li>
               <li>
-                <a href='/style-presets' className='hover:text-foreground transition-colors'>
+                <a
+                  href='/style-presets'
+                  className='hover:text-foreground transition-colors'
+                >
                   Style Presets
                 </a>
               </li>
@@ -67,25 +81,34 @@ export function SiteFooter() {
             <h4 className='font-medium text-foreground'>Support</h4>
             <ul className='space-y-3 text-sm text-muted-foreground'>
               <li>
-                <a href='/help' className='hover:text-foreground transition-colors'>
+                <a
+                  href='/help'
+                  className='hover:text-foreground transition-colors'
+                >
                   Help Center
                 </a>
               </li>
               <li>
-                <a href='/contact' className='hover:text-foreground transition-colors'>
+                <a
+                  href='/contact'
+                  className='hover:text-foreground transition-colors'
+                >
                   Contact Us
                 </a>
               </li>
               <li>
-                <a href='/about' className='hover:text-foreground transition-colors'>
+                <a
+                  href='/about'
+                  className='hover:text-foreground transition-colors'
+                >
                   About
                 </a>
               </li>
             </ul>
           </div>
         </div>
-        <div className='mt-12 pt-8 border-t text-center text-sm text-muted-foreground'>
-          <p>&copy; 2024 Fashion Visualizer. All rights reserved.</p>
+        <div className='mt-12 pt-8 border-t text-sm text-muted-foreground'>
+          <p>&copy; 2025 Thalorra. All rights reserved.</p>
         </div>
       </div>
     </footer>

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { mockProducts } from '~/lib/constants/products';
-import { ProductCard } from './_components/product-card';
+import { ProductCard } from '../../../components/modules/products/product-card';
 
 export default function ProductsPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
