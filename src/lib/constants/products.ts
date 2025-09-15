@@ -48,4 +48,44 @@ export const mockProducts: Product[] = [
       'Sport sunglasses with advanced lens technology and sleek design.',
     brand: 'Oakley',
   },
+  {
+    id: '5',
+    name: 'Casablanca Jacket',
+    price: 1295.99,
+    category: 'tops',
+    imageUrl: '/products/casablanca-jacket.png',
+    description:
+      'Luxury silk jacket with vibrant prints inspired by Moroccan heritage.',
+    brand: 'Casablanca',
+  },
+  {
+    id: '6',
+    name: 'Gucci Beanie',
+    price: 295.99,
+    category: 'accessories',
+    imageUrl: '/products/gucci-beanie.png',
+    description:
+      'Premium wool beanie with iconic GG logo and Italian craftsmanship.',
+    brand: 'Gucci',
+  },
+  {
+    id: '7',
+    name: 'Misbhv Pants',
+    price: 379.99,
+    category: 'bottoms',
+    imageUrl: '/products/misbhv-pants.png',
+    description:
+      'Contemporary streetwear pants with avant-garde silhouette and details.',
+    brand: 'Misbhv',
+  },
+  {
+    id: '8',
+    name: 'Balenciaga Sunglasses',
+    price: 525.99,
+    category: 'accessories',
+    imageUrl: '/products/balenciaga-shades.png',
+    description:
+      'Designer sunglasses with futuristic frames and premium UV protection.',
+    brand: 'Balenciaga',
+  },
 ];

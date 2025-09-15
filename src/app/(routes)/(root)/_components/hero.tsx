@@ -6,7 +6,7 @@ export function Hero() {
   return (
     <section className='max-h-screen w-full aspect-video relative flex flex-col justify-end -mt-16 pt-16'>
       <Image
-        src='/hero.png'
+        src='/hero_background.png'
         alt='Hero Image'
         fill
         className='opacity object-cover z-0'
