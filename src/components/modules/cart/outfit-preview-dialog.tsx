@@ -20,6 +20,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '~/components/ui/tooltip';
+import { Skeleton } from '~/components/ui/skeleton';
 import type { Product } from '~/lib/constants/products';
 import { formatPrice } from '~/lib/utils/cart';
 
@@ -28,6 +29,7 @@ interface OutfitPreviewDialogProps {
   onOpenChange: (open: boolean) => void;
   generatedImage: string | null;
   products: Product[];
+  isLoading?: boolean;
 }
 
 export function OutfitPreviewDialog({
@@ -35,16 +37,16 @@ export function OutfitPreviewDialog({
   onOpenChange,
   generatedImage,
   products,
+  isLoading = false,
 }: OutfitPreviewDialogProps) {
-  if (!generatedImage) return null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className='lg:max-w-[90vw]'>
+      <DialogContent className='lg:max-w-2xl'>
         <TooltipProvider>
           <DialogHeader className='mb-6'>
             <DialogTitle className='text-xl font-semibold'>
-              Your Generated Outfit
+              {isLoading ? 'Generating Your Outfit...' : 'Your Generated Outfit'}
             </DialogTitle>
           </DialogHeader>
 
@@ -53,12 +55,16 @@ export function OutfitPreviewDialog({
             {/* Generated Image */}
             <div className='flex-1 flex items-center justify-center min-h-0'>
               <div className='relative w-full max-w-lg aspect-square rounded-lg overflow-hidden bg-secondary'>
-                <Image
-                  src={generatedImage}
-                  alt='Generated outfit visualization'
-                  fill
-                  className='object-cover'
-                />
+                {isLoading ? (
+                  <Skeleton className='w-full h-full' />
+                ) : generatedImage ? (
+                  <Image
+                    src={generatedImage}
+                    alt='Generated outfit visualization'
+                    fill
+                    className='object-cover'
+                  />
+                ) : null}
               </div>
             </div>
 
@@ -101,63 +107,65 @@ export function OutfitPreviewDialog({
           </div>
 
           {/* Bottom Section - Actions */}
-          <div className='flex items-center justify-between pt-6 border-t mt-6'>
-            {/* Rating Section */}
-            <div className='flex items-center gap-2'>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant='ghost'
-                    size='sm'
-                    className='text-green-500 hover:text-green-700 hover:bg-green-50'
-                  >
-                    <ThumbsUpIcon className='w-4 h-4' />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Good!</p>
-                </TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant='ghost'
-                    size='sm'
-                    className='text-red-400 hover:text-red-700 hover:bg-red-50'
-                  >
-                    <ThumbsDownIcon className='w-4 h-4' />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>bad</p>
-                </TooltipContent>
-              </Tooltip>
-            </div>
+          {!isLoading && (
+            <div className='flex items-center justify-between pt-6 border-t mt-6'>
+              {/* Rating Section */}
+              <div className='flex items-center gap-2'>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant='ghost'
+                      size='sm'
+                      className='text-green-500 hover:text-green-700 hover:bg-green-50'
+                    >
+                      <ThumbsUpIcon className='w-4 h-4' />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Good!</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant='ghost'
+                      size='sm'
+                      className='text-red-400 hover:text-red-700 hover:bg-red-50'
+                    >
+                      <ThumbsDownIcon className='w-4 h-4' />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>bad</p>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
 
-            {/* Action Buttons */}
-            <div className='flex items-center gap-2'>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant='ghost' size='sm'>
-                    <Share2Icon className='w-4 h-4' />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Share this outfit</p>
-                </TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant='ghost' size='sm'>
-                    <DownloadIcon className='w-4 h-4' />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Download outfit image</p>
-                </TooltipContent>
-              </Tooltip>
+              {/* Action Buttons */}
+              <div className='flex items-center gap-2'>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant='ghost' size='sm'>
+                      <Share2Icon className='w-4 h-4' />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Share this outfit</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant='ghost' size='sm'>
+                      <DownloadIcon className='w-4 h-4' />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Download outfit image</p>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
             </div>
-          </div>
+          )}
         </TooltipProvider>
       </DialogContent>
     </Dialog>

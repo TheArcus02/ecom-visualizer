@@ -120,7 +120,7 @@ export async function POST(
           content: [
             {
               type: 'text',
-              text: 'Assemble the outfit and put it on a men, lifestyle image.',
+              text: 'Assemble the outfit and put it on a men, lifestyle image. Do not add additional items besides the ones provided.',
             },
             {
               type: 'image',

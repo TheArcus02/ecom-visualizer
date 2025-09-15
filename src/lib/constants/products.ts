@@ -70,13 +70,13 @@ export const mockProducts: Product[] = [
   },
   {
     id: '7',
-    name: 'Misbhv Pants',
+    name: 'MISBHV Pants',
     price: 379.99,
     category: 'bottoms',
     imageUrl: '/products/misbhv-pants.png',
     description:
       'Contemporary streetwear pants with avant-garde silhouette and details.',
-    brand: 'Misbhv',
+    brand: 'MISBHV',
   },
   {
     id: '8',

@@ -49,6 +49,7 @@ export function CartSheet() {
       console.warn('No items in cart to generate fit');
       return;
     }
+    setShowPreviewDialog(true);
     generateFitMutation.mutate(items);
   };
 
@@ -150,6 +151,7 @@ export function CartSheet() {
         onOpenChange={setShowPreviewDialog}
         generatedImage={generatedImage}
         products={cartItemsWithDetails.map((item) => item.product)}
+        isLoading={generateFitMutation.isPending}
       />
     </Sheet>
   );
