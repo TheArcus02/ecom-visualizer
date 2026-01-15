@@ -1,7 +1,11 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  serverExternalPackages: ['sharp'],
+  // Ensure sharp works in production
+  outputFileTracingIncludes: {
+    '/api/generate-fit': ['./node_modules/sharp/**/*'],
+  },
 };
 
 export default nextConfig;

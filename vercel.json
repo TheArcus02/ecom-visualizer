@@ -1,0 +1,9 @@
+{
+  "installCommand": "pnpm install --include=optional",
+  "buildCommand": "pnpm build",
+  "functions": {
+    "api/generate-fit": {
+      "maxDuration": 60
+    }
+  }
+}
