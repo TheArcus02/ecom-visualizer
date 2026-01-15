@@ -132,9 +132,9 @@ export async function concatenateProductImages(
     return {
       buffer: finalBuffer,
       metadata: {
-        width: metadata.width || config.targetWidth,
-        height: metadata.height || config.targetHeight,
-        format: metadata.format,
+        width: metadata.width ?? config.targetWidth,
+        height: metadata.height ?? config.targetHeight,
+        format: metadata.format ?? 'jpeg',
         size: finalBuffer.length,
       },
     };
