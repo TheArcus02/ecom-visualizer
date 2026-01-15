@@ -4,7 +4,7 @@ import './globals.css';
 import { cn } from '~/lib/utils';
 import { QueryProvider } from '~/components/providers/query-provider';
 
-export const inter = Inter({
+const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
 });
