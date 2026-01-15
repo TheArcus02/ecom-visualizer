@@ -9,6 +9,10 @@ import {
 import { getCartItemsWithDetails } from '~/lib/utils/cart';
 import type { CartItem } from '~/lib/stores/cart-store';
 
+// Route segment config for Vercel deployment
+export const maxDuration = 60; // 60 seconds max execution time
+export const dynamic = 'force-dynamic'; // Disable static optimization
+
 export interface GenerateFitRequest {
   cartItems: CartItem[];
 }
