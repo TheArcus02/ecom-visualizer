@@ -1,4 +1,0 @@
-{
-  "installCommand": "pnpm install --include=optional",
-  "buildCommand": "pnpm build"
-}
