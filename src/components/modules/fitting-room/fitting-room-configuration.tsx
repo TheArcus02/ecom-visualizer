@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useForm } from '@tanstack/react-form';
-import { WandSparkles } from 'lucide-react';
+import { Check, Mars, Venus, WandSparkles } from 'lucide-react';
 import { mockProducts } from '~/lib/constants/products';
 import type { Product } from '~/lib/constants/products';
 import {
@@ -12,9 +12,8 @@ import type { OutfitBuilderState } from '~/lib/utils/outfit-builder';
 import type { OutfitFormData } from '~/lib/schemas/outfit';
 import { SlotSection } from './slot-section';
 import { Button } from '~/components/ui/button';
-import { RadioGroup, RadioGroupItem } from '~/components/ui/radio-group';
-import { Label } from '~/components/ui/label';
 import { Field, FieldLabel, FieldError } from '~/components/ui/field';
+import { cn } from '~/lib/utils';
 
 function getProductById(productId: string): Product | null {
   return mockProducts.find((p) => p.id === productId) ?? null;
@@ -156,26 +155,121 @@ export function FittingRoomConfiguration({
           <FieldLabel>Model</FieldLabel>
           <form.Field name='model'>
             {(field) => (
-              <RadioGroup
-                value={field.state.value}
-                onValueChange={(value) => {
-                  field.handleChange(value as 'male' | 'female');
-                  onOutfitStateChange({
-                    ...outfitState,
-                    model: value as 'male' | 'female',
-                  });
+              <div
+                role='radiogroup'
+                aria-label='Model'
+                className='grid grid-cols-2 gap-3'
+                onKeyDown={(e) => {
+                  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    field.handleChange('male');
+                    onOutfitStateChange({ ...outfitState, model: 'male' });
+                  }
+                  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    field.handleChange('female');
+                    onOutfitStateChange({ ...outfitState, model: 'female' });
+                  }
                 }}
-                className='flex gap-4'
               >
-                <div className='flex items-center space-x-2'>
-                  <RadioGroupItem value='male' id='male' />
-                  <Label htmlFor='male'>Male</Label>
-                </div>
-                <div className='flex items-center space-x-2'>
-                  <RadioGroupItem value='female' id='female' />
-                  <Label htmlFor='female'>Female</Label>
-                </div>
-              </RadioGroup>
+                <button
+                  type='button'
+                  role='radio'
+                  aria-checked={field.state.value === 'male'}
+                  onClick={() => {
+                    field.handleChange('male');
+                    onOutfitStateChange({ ...outfitState, model: 'male' });
+                  }}
+                  className={cn(
+                    'group flex w-full items-center justify-between gap-3 rounded-xl border bg-card p-4 text-left shadow-sm transition-colors hover:bg-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50',
+                    field.state.value === 'male' &&
+                      'border-primary bg-accent/30 ring-1 ring-primary/30'
+                  )}
+                >
+                  <div className='flex items-center gap-3'>
+                    <div
+                      className={cn(
+                        'flex size-10 items-center justify-center rounded-lg border bg-background',
+                        field.state.value === 'male' && 'border-primary/40'
+                      )}
+                    >
+                      <Mars
+                        className={cn(
+                          'size-5 text-muted-foreground',
+                          field.state.value === 'male' && 'text-primary'
+                        )}
+                      />
+                    </div>
+                    <div className='leading-tight'>
+                      <div className='font-medium'>Men</div>
+                      <div className='text-xs text-muted-foreground'>
+                        Male model
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    className={cn(
+                      'flex size-6 items-center justify-center rounded-full border text-muted-foreground transition-opacity',
+                      field.state.value === 'male'
+                        ? 'border-primary bg-primary text-primary-foreground opacity-100'
+                        : 'opacity-0'
+                    )}
+                    aria-hidden='true'
+                  >
+                    <Check className='size-4' />
+                  </div>
+                </button>
+
+                <button
+                  type='button'
+                  role='radio'
+                  aria-checked={field.state.value === 'female'}
+                  onClick={() => {
+                    field.handleChange('female');
+                    onOutfitStateChange({ ...outfitState, model: 'female' });
+                  }}
+                  className={cn(
+                    'group flex w-full items-center justify-between gap-3 rounded-xl border bg-card p-4 text-left shadow-sm transition-colors hover:bg-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50',
+                    field.state.value === 'female' &&
+                      'border-primary bg-accent/30 ring-1 ring-primary/30'
+                  )}
+                >
+                  <div className='flex items-center gap-3'>
+                    <div
+                      className={cn(
+                        'flex size-10 items-center justify-center rounded-lg border bg-background',
+                        field.state.value === 'female' && 'border-primary/40'
+                      )}
+                    >
+                      <Venus
+                        className={cn(
+                          'size-5 text-muted-foreground',
+                          field.state.value === 'female' && 'text-primary'
+                        )}
+                      />
+                    </div>
+                    <div className='leading-tight'>
+                      <div className='font-medium'>Women</div>
+                      <div className='text-xs text-muted-foreground'>
+                        Female model
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    className={cn(
+                      'flex size-6 items-center justify-center rounded-full border text-muted-foreground transition-opacity',
+                      field.state.value === 'female'
+                        ? 'border-primary bg-primary text-primary-foreground opacity-100'
+                        : 'opacity-0'
+                    )}
+                    aria-hidden='true'
+                  >
+                    <Check className='size-4' />
+                  </div>
+                </button>
+              </div>
             )}
           </form.Field>
         </Field>

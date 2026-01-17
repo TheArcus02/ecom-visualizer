@@ -119,7 +119,10 @@ export function FittingRoomModal() {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && closeFittingRoom()}>
-      <DialogContent className='max-w-[95vw] sm:max-w-[90vw] lg:max-w-4xl max-h-[90vh] overflow-hidden flex flex-col p-0 gap-0'>
+      <DialogContent 
+        className='max-w-[95vw] sm:max-w-[90vw] lg:max-w-4xl max-h-[90vh] overflow-hidden flex flex-col p-0 gap-0'
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         {step === 'configuration' && (
           <>
             <DialogHeader className='px-6 pt-6 pb-4 flex-shrink-0'>

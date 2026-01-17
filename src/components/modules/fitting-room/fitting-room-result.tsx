@@ -1,15 +1,18 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
 import {
   ThumbsUpIcon,
   ThumbsDownIcon,
   DownloadIcon,
+  Maximize2,
   Share2Icon,
   ArrowLeft,
   Loader2,
 } from 'lucide-react';
 import { Button } from '~/components/ui/button';
+import { Dialog, DialogContent } from '~/components/ui/dialog';
 import {
   Tooltip,
   TooltipContent,
@@ -32,9 +35,40 @@ export function FittingRoomResult({
   isLoading,
   onBack,
 }: FittingRoomResultProps) {
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+
+  const handleDownload = async () => {
+    if (!generatedImage) return;
+
+    try {
+      // Works for both data URLs and normal URLs.
+      const res = await fetch(generatedImage);
+      if (!res.ok) throw new Error('Failed to fetch image for download');
+
+      const blob = await res.blob();
+      const objectUrl = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = objectUrl;
+      a.download = `fitting-room-${new Date()
+        .toISOString()
+        .slice(0, 19)
+        .replace(/[:T]/g, '-')}.${blob.type.split('/')[1] ?? 'png'}`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      URL.revokeObjectURL(objectUrl);
+    } catch (err) {
+      console.error(err);
+      // Fallback: open in a new tab so the user can save manually.
+      window.open(generatedImage, '_blank', 'noopener,noreferrer');
+    }
+  };
+
   return (
     <TooltipProvider>
-      <div className='space-y-6'>
+      <div className='space-y-6 py-6'>
         {/* Header with back button */}
         <div className='flex items-center gap-3'>
           <Button
@@ -53,7 +87,28 @@ export function FittingRoomResult({
 
         {/* Generated Image */}
         <div className='flex items-center justify-center'>
-          <div className='relative w-full max-w-lg aspect-square rounded-lg overflow-hidden bg-secondary'>
+          <div className='group relative w-full max-w-lg aspect-square rounded-lg overflow-hidden bg-secondary'>
+            {!isLoading && generatedImage && (
+              <div className='absolute right-2 top-2 z-10 opacity-0 pointer-events-none transition-opacity group-hover:opacity-100 group-hover:pointer-events-auto group-focus-within:opacity-100 group-focus-within:pointer-events-auto'>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      type='button'
+                      variant='secondary'
+                      size='icon-sm'
+                      className='bg-background/70 backdrop-blur hover:bg-background'
+                      onClick={() => setIsPreviewOpen(true)}
+                    >
+                      <Maximize2 className='w-4 h-4' />
+                      <span className='sr-only'>Enlarge image</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Enlarge</p>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
+            )}
             {isLoading ? (
               <div className='w-full h-full flex flex-col items-center justify-center gap-4'>
                 <Loader2 className='w-12 h-12 animate-spin text-muted-foreground' />
@@ -164,7 +219,12 @@ export function FittingRoomResult({
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant='ghost' size='sm'>
+                  <Button
+                    variant='ghost'
+                    size='sm'
+                    onClick={handleDownload}
+                    disabled={!generatedImage}
+                  >
                     <DownloadIcon className='w-4 h-4' />
                   </Button>
                 </TooltipTrigger>
@@ -176,6 +236,29 @@ export function FittingRoomResult({
           </div>
         )}
       </div>
+
+      <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen} modal={false}>
+        <DialogContent className='max-w-[95vw] sm:max-w-[90vw] lg:max-w-4xl max-h-[90vh] p-0 overflow-hidden'>
+          <div className='bg-black'>
+            {generatedImage ? (
+              <div className='relative h-[85vh] w-full'>
+                <Image
+                  src={generatedImage}
+                  alt='Generated outfit visualization'
+                  fill
+                  sizes='95vw'
+                  unoptimized
+                  className='object-contain'
+                />
+              </div>
+            ) : (
+              <div className='p-6 text-sm text-muted-foreground bg-background'>
+                No image generated
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </TooltipProvider>
   );
 }
