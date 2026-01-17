@@ -80,7 +80,7 @@ export function SlotSection({
           }}
           className='w-full'
         >
-          <CarouselContent className='-ml-2'>
+          <CarouselContent className='-ml-2 mr-0'>
             {allProducts.map((product) => (
               <CarouselItem
                 key={product.id}

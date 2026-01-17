@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod/v4';
 
 export const outfitSchema = z.object({
   top: z.string().min(1, 'Top is required'),

@@ -1,5 +1,4 @@
 import { useMutation } from '@tanstack/react-query';
-import type { CartItem } from '~/lib/stores/cart-store';
 import type {
   GenerateFitRequest,
   GenerateFitResponse,

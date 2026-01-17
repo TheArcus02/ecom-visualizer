@@ -1,5 +1,6 @@
 import type { CartItem } from '~/lib/stores/cart-store';
-import { mockProducts, type Product, type ProductCategory } from '~/lib/constants/products';
+import type { Product, ProductCategory } from '~/lib/constants/products';
+import { mockProducts } from '~/lib/constants/products';
 import type { OutfitFormData } from '~/lib/schemas/outfit';
 
 export interface OutfitSlotState {
@@ -67,7 +68,8 @@ export function buildInitialOutfitState(
 
     if (categoryProducts.length > 0) {
       // Priority 1 & 2: Use cart items, most recent is selected
-      const selected = categoryProducts[categoryProducts.length - 1]!;
+      const lastIndex = categoryProducts.length - 1;
+      const selected = categoryProducts[lastIndex];
       const alternatives = categoryProducts.slice(0, -1).map((p) => p.id);
       
       // Add default as alternative if it exists and is different
