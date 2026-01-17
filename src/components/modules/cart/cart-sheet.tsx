@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
 import { ShoppingBagIcon, WandSparkles } from 'lucide-react';
 import { useCartStore } from '~/lib/stores/cart-store';
+import { useFittingRoomStore } from '~/lib/stores/fitting-room-store';
 import {
   getCartItemsWithDetails,
   calculateCartTotal,
@@ -16,25 +16,25 @@ import {
   SheetDescription,
   SheetFooter,
 } from '~/components/ui/sheet';
-import { FittingRoomModal } from '../fitting-room/fitting-room-modal';
 import { CartItem } from './cart-item';
 import { Button } from '~/components/ui/button';
 
 export function CartSheet() {
   const open = useCartStore((state) => state.isSheetOpen);
   const onOpenChange = useCartStore((state) => state.setSheetOpen);
+  const openFittingRoom = useFittingRoomStore((state) => state.openFittingRoom);
 
   const { items, updateQuantity, removeItem } = useCartStore();
   const cartItemsWithDetails = getCartItemsWithDetails(items);
   const total = calculateCartTotal(items);
-  const [showFittingRoom, setShowFittingRoom] = useState(false);
 
   const handleOpenFittingRoom = () => {
     if (items.length === 0) {
       console.warn('No items in cart to generate fit');
       return;
     }
-    setShowFittingRoom(true);
+    // Pass cart items as prefilled items
+    openFittingRoom(items.map((item) => ({ productId: item.id })));
   };
 
   return (
@@ -108,13 +108,6 @@ export function CartSheet() {
           </SheetFooter>
         )}
       </SheetContent>
-
-      {/* Fitting Room Modal */}
-      <FittingRoomModal
-        open={showFittingRoom}
-        onOpenChange={setShowFittingRoom}
-        cartItems={items}
-      />
     </Sheet>
   );
 }

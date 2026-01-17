@@ -1,6 +1,7 @@
 import { SiteHeader } from '~/components/layout/site-header';
 import { SiteFooter } from '~/components/layout/site-footer';
 import { CartSheet } from '~/components/modules/cart/cart-sheet';
+import { FittingRoomModal } from '~/components/modules/fitting-room/fitting-room-modal';
 
 export default function AppLayout({
   children,
@@ -13,6 +14,7 @@ export default function AppLayout({
       <main className='flex flex-1 flex-col'>{children}</main>
       <SiteFooter />
       <CartSheet />
+      <FittingRoomModal />
     </div>
   );
 }

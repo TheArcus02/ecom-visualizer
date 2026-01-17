@@ -3,15 +3,16 @@
 import { useState, useEffect } from 'react';
 import { useForm } from '@tanstack/react-form';
 import { Loader2, WandSparkles } from 'lucide-react';
+import { mockProducts } from '~/lib/constants/products';
+import type { Product } from '~/lib/constants/products';
 import type { CartItem } from '~/lib/stores/cart-store';
-import { mockProducts  } from '~/lib/constants/products';
-import type {Product} from '~/lib/constants/products';
+import { useFittingRoomStore } from '~/lib/stores/fitting-room-store';
 import {
   buildInitialOutfitState,
   outfitStateToFormData,
 } from '~/lib/utils/outfit-builder';
-import type {OutfitBuilderState} from '~/lib/utils/outfit-builder';
-import type {OutfitFormData} from '~/lib/schemas/outfit';
+import type { OutfitBuilderState } from '~/lib/utils/outfit-builder';
+import type { OutfitFormData } from '~/lib/schemas/outfit';
 import { SlotSection } from './slot-section';
 import {
   Dialog,
@@ -27,21 +28,12 @@ import { Field, FieldLabel, FieldError } from '~/components/ui/field';
 import { useGenerateFit } from '~/hooks/use-generate-fit';
 import { OutfitPreviewDialog } from '../cart/outfit-preview-dialog';
 
-interface FittingRoomModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  cartItems: CartItem[];
-}
-
 function getProductById(productId: string): Product | null {
   return mockProducts.find((p) => p.id === productId) ?? null;
 }
 
-export function FittingRoomModal({
-  open,
-  onOpenChange,
-  cartItems,
-}: FittingRoomModalProps) {
+export function FittingRoomModal() {
+  const { isOpen, prefilledItems, closeFittingRoom } = useFittingRoomStore();
   const [outfitState, setOutfitState] = useState<OutfitBuilderState | null>(
     null
   );
@@ -53,7 +45,7 @@ export function FittingRoomModal({
       if (data.success && data.data) {
         setGeneratedImage(data.data.generatedImage);
         setShowPreviewDialog(true);
-        onOpenChange(false);
+        closeFittingRoom();
       }
     },
     onError: (error) => {
@@ -63,17 +55,22 @@ export function FittingRoomModal({
 
   // Initialize outfit state when modal opens
   useEffect(() => {
-    if (open && cartItems.length > 0) {
+    if (isOpen) {
       try {
+        // Convert prefilled items to cart items format for the builder
+        const cartItems: CartItem[] = prefilledItems.map((item) => ({
+          id: item.productId,
+          quantity: 1,
+        }));
         const initialState = buildInitialOutfitState(cartItems, 'male');
         setOutfitState(initialState);
       } catch (error) {
         console.error('Failed to initialize outfit state:', error);
         alert('Failed to initialize outfit. Please try again.');
-        onOpenChange(false);
+        closeFittingRoom();
       }
     }
-  }, [open, cartItems, onOpenChange]);
+  }, [isOpen, prefilledItems, closeFittingRoom]);
 
   const defaultFormValues: OutfitFormData = outfitState
     ? outfitStateToFormData(outfitState)
@@ -86,18 +83,23 @@ export function FittingRoomModal({
 
   const form = useForm({
     defaultValues: defaultFormValues,
-    onSubmit: async ({ value }) => {
+    onSubmit: ({ value }) => {
       // Convert outfit form data to cart items format for API
       const outfitProducts: Product[] = [];
-      if (value.top) outfitProducts.push(getProductById(value.top)!);
-      if (value.bottom) outfitProducts.push(getProductById(value.bottom)!);
-      if (value.shoes) outfitProducts.push(getProductById(value.shoes)!);
-      if (value.outerwear && value.outerwear.length > 0)
-        outfitProducts.push(getProductById(value.outerwear)!);
-      if (value.shades && value.shades.length > 0)
-        outfitProducts.push(getProductById(value.shades)!);
-      if (value.hats && value.hats.length > 0)
-        outfitProducts.push(getProductById(value.hats)!);
+      
+      const addProduct = (productId: string | undefined) => {
+        if (productId) {
+          const product = getProductById(productId);
+          if (product) outfitProducts.push(product);
+        }
+      };
+      
+      addProduct(value.top);
+      addProduct(value.bottom);
+      addProduct(value.shoes);
+      addProduct(value.outerwear);
+      addProduct(value.shades);
+      addProduct(value.hats);
 
       // Convert to cart items format
       const outfitCartItems: CartItem[] = outfitProducts.map((p) => ({
@@ -171,7 +173,8 @@ export function FittingRoomModal({
     setOutfitState((prev) => {
       if (!prev) return null;
 
-      const { [slotName]: _, ...remainingSlots } = prev.slots as Record<string, unknown>;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { [slotName]: _removed, ...remainingSlots } = prev.slots as Record<string, unknown>;
 
       return {
         ...prev,
@@ -186,7 +189,7 @@ export function FittingRoomModal({
   const optionalSlotNames = ['outerwear', 'shades', 'hats'];
 
   const getSlotProduct = (slotName: string): Product | null => {
-    const slot = outfitState?.slots[slotName as keyof typeof outfitState.slots];
+    const slot = outfitState.slots[slotName as keyof typeof outfitState.slots];
     if (!slot) return null;
     return getProductById(slot.selected);
   };
@@ -213,7 +216,7 @@ export function FittingRoomModal({
 
   return (
     <>
-      <Dialog open={open} onOpenChange={onOpenChange}>
+      <Dialog open={isOpen} onOpenChange={(open) => !open && closeFittingRoom()}>
         <DialogContent className='max-w-4xl max-h-[90vh] overflow-y-auto'>
           <DialogHeader>
             <DialogTitle className='text-2xl font-bold'>
@@ -235,17 +238,7 @@ export function FittingRoomModal({
             {/* Model Selector */}
             <Field>
               <FieldLabel>Model</FieldLabel>
-              <form.Field
-                name='model'
-                validators={{
-                  onChange: ({ value }) => {
-                    if (value !== 'male' && value !== 'female') {
-                      return { message: 'Model must be male or female' };
-                    }
-                    return undefined;
-                  },
-                }}
-              >
+              <form.Field name='model'>
                 {(field) => (
                   <RadioGroup
                     value={field.state.value}
@@ -311,7 +304,7 @@ export function FittingRoomModal({
               <Button
                 type='button'
                 variant='outline'
-                onClick={() => onOpenChange(false)}
+                onClick={closeFittingRoom}
               >
                 Cancel
               </Button>
@@ -342,18 +335,14 @@ export function FittingRoomModal({
         open={showPreviewDialog}
         onOpenChange={setShowPreviewDialog}
         generatedImage={generatedImage}
-        products={
-          outfitState
-            ? [
-                getSlotProduct('top'),
-                getSlotProduct('bottom'),
-                getSlotProduct('shoes'),
-                getSlotProduct('outerwear'),
-                getSlotProduct('shades'),
-                getSlotProduct('hats'),
-              ].filter((p): p is Product => p !== null)
-            : []
-        }
+        products={[
+          getSlotProduct('top'),
+          getSlotProduct('bottom'),
+          getSlotProduct('shoes'),
+          getSlotProduct('outerwear'),
+          getSlotProduct('shades'),
+          getSlotProduct('hats'),
+        ].filter((p): p is Product => p !== null)}
         isLoading={generateFitMutation.isPending}
       />
     </>

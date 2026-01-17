@@ -125,7 +125,7 @@ export async function POST(
           content: [
             {
               type: 'text',
-              text: `Assemble the outfit and put it on a ${model === 'male' ? 'male' : 'female'} model, lifestyle image. Do not add additional items besides the ones provided.`,
+              text: `Assemble the outfit and put it on a ${model === 'male' ? 'male' : 'female'} model. The model should be displayed on a clean white or light grayish background. Do not add additional items besides the ones provided.`,
             },
             {
               type: 'image',

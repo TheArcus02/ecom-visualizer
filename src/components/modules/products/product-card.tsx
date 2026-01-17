@@ -1,18 +1,25 @@
 'use client';
 
-import { CheckIcon, PlusIcon } from 'lucide-react';
+import { CheckIcon, PlusIcon, SparklesIcon } from 'lucide-react';
 import Image from 'next/image';
 import type { Product } from '~/lib/constants/products';
 import { useCartStore } from '~/lib/stores/cart-store';
+import { useFittingRoomStore } from '~/lib/stores/fitting-room-store';
 import { formatPrice } from '~/lib/utils/cart';
 
 export function ProductCard({ product }: { product: Product }) {
   const { addItem, isInCart, getItemQuantity } = useCartStore();
+  const openFittingRoom = useFittingRoomStore((state) => state.openFittingRoom);
   const quantity = getItemQuantity(product.id);
   const inCart = isInCart(product.id);
 
   const handleAddToCart = () => {
     addItem(product.id);
+  };
+
+  const handleTryOn = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    openFittingRoom([{ productId: product.id }]);
   };
 
   return (
@@ -25,6 +32,15 @@ export function ProductCard({ product }: { product: Product }) {
           className='object-cover group-hover:scale-105 transition-transform duration-300'
         />
         <div className='absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300' />
+
+        {/* Try-on Button */}
+        <button
+          onClick={handleTryOn}
+          className='absolute bottom-3 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-full bg-background/90 text-foreground text-xs font-medium flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-background hover:scale-105'
+        >
+          <SparklesIcon className='w-3 h-3' />
+          Try on
+        </button>
 
         {/* Add to Cart Button */}
         <button

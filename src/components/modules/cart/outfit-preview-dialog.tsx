@@ -150,7 +150,7 @@ export function OutfitPreviewDialog({
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Share this outfit</p>
+                    <p>Share</p>
                   </TooltipContent>
                 </Tooltip>
                 <Tooltip>
@@ -160,7 +160,7 @@ export function OutfitPreviewDialog({
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Download outfit image</p>
+                    <p>Download</p>
                   </TooltipContent>
                 </Tooltip>
               </div>
