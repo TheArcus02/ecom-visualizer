@@ -9,16 +9,21 @@ export default function ProductsPage() {
 
   const categories = [
     { id: 'all', label: 'All Products' },
-    { id: 'tops', label: 'Tops' },
-    { id: 'bottoms', label: 'Bottoms' },
+    { id: 'top', label: 'Tops' },
+    { id: 'bottom', label: 'Bottoms' },
     { id: 'shoes', label: 'Shoes' },
-    { id: 'accessories', label: 'Accessories' },
+    { id: 'outerwear', label: 'Outerwear' },
+    { id: 'shades', label: 'Shades' },
+    { id: 'hats', label: 'Hats' },
   ];
+
+  // Filter out default products from display
+  const displayProducts = mockProducts.filter((product) => !product.isDefault);
 
   const filteredProducts =
     selectedCategory === 'all'
-      ? mockProducts
-      : mockProducts.filter((product) => product.category === selectedCategory);
+      ? displayProducts
+      : displayProducts.filter((product) => product.category === selectedCategory);
 
   return (
     <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>

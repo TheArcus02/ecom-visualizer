@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ShoppingBagIcon, Loader2, WandSparkles } from 'lucide-react';
+import { ShoppingBagIcon, WandSparkles } from 'lucide-react';
 import { useCartStore } from '~/lib/stores/cart-store';
 import {
   getCartItemsWithDetails,
@@ -16,8 +16,7 @@ import {
   SheetDescription,
   SheetFooter,
 } from '~/components/ui/sheet';
-import { useGenerateFit } from '~/hooks/use-generate-fit';
-import { OutfitPreviewDialog } from './outfit-preview-dialog';
+import { FittingRoomModal } from '../fitting-room/fitting-room-modal';
 import { CartItem } from './cart-item';
 import { Button } from '~/components/ui/button';
 
@@ -28,29 +27,14 @@ export function CartSheet() {
   const { items, updateQuantity, removeItem } = useCartStore();
   const cartItemsWithDetails = getCartItemsWithDetails(items);
   const total = calculateCartTotal(items);
-  const [generatedImage, setGeneratedImage] = useState<string | null>(null);
-  const [showPreviewDialog, setShowPreviewDialog] = useState(false);
+  const [showFittingRoom, setShowFittingRoom] = useState(false);
 
-  const generateFitMutation = useGenerateFit({
-    onSuccess: (data) => {
-      if (data.success && data.data) {
-        // Use the AI-generated image instead of concatenated image
-        setGeneratedImage(data.data.generatedImage);
-        setShowPreviewDialog(true);
-      }
-    },
-    onError: (error) => {
-      alert(`Failed to generate fit: ${error.message}`);
-    },
-  });
-
-  const handleGenerateFit = () => {
+  const handleOpenFittingRoom = () => {
     if (items.length === 0) {
       console.warn('No items in cart to generate fit');
       return;
     }
-    setShowPreviewDialog(true);
-    generateFitMutation.mutate(items);
+    setShowFittingRoom(true);
   };
 
   return (
@@ -101,34 +85,14 @@ export function CartSheet() {
             </div>
 
             <div className='grid grid-cols-1 gap-3 w-full'>
-              {generatedImage ? (
-                <Button
-                  variant='secondary'
-                  size='lg'
-                  onClick={() => setShowPreviewDialog(true)}
-                >
-                  View Generated Outfit
-                </Button>
-              ) : (
-                <Button
-                  variant='secondary'
-                  size='lg'
-                  onClick={handleGenerateFit}
-                  disabled={generateFitMutation.isPending}
-                >
-                  {generateFitMutation.isPending ? (
-                    <>
-                      <Loader2 className='w-4 h-4 animate-spin' />
-                      Generating...
-                    </>
-                  ) : (
-                    <>
-                      <WandSparkles />
-                      Visualize Your Fit
-                    </>
-                  )}
-                </Button>
-              )}
+              <Button
+                variant='secondary'
+                size='lg'
+                onClick={handleOpenFittingRoom}
+              >
+                <WandSparkles className='w-4 h-4 mr-2' />
+                Visualize Your Fit
+              </Button>
 
               <Button
                 size='lg'
@@ -145,13 +109,11 @@ export function CartSheet() {
         )}
       </SheetContent>
 
-      {/* Outfit Preview Dialog */}
-      <OutfitPreviewDialog
-        open={showPreviewDialog}
-        onOpenChange={setShowPreviewDialog}
-        generatedImage={generatedImage}
-        products={cartItemsWithDetails.map((item) => item.product)}
-        isLoading={generateFitMutation.isPending}
+      {/* Fitting Room Modal */}
+      <FittingRoomModal
+        open={showFittingRoom}
+        onOpenChange={setShowFittingRoom}
+        cartItems={items}
       />
     </Sheet>
   );

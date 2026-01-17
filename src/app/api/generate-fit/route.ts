@@ -15,6 +15,7 @@ export const dynamic = 'force-dynamic'; // Disable static optimization
 
 export interface GenerateFitRequest {
   cartItems: CartItem[];
+  model?: 'male' | 'female';
 }
 
 export interface GenerateFitResponse {
@@ -43,7 +44,7 @@ export async function POST(
   try {
     // Parse request body
     const body = (await request.json()) as GenerateFitRequest;
-    const { cartItems } = body;
+    const { cartItems, model = 'male' } = body;
 
     // Validate input
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -124,7 +125,7 @@ export async function POST(
           content: [
             {
               type: 'text',
-              text: 'Assemble the outfit and put it on a men, lifestyle image. Do not add additional items besides the ones provided.',
+              text: `Assemble the outfit and put it on a ${model === 'male' ? 'male' : 'female'} model, lifestyle image. Do not add additional items besides the ones provided.`,
             },
             {
               type: 'image',

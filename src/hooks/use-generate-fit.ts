@@ -12,15 +12,15 @@ interface UseGenerateFitOptions {
 
 export function useGenerateFit(options?: UseGenerateFitOptions) {
   return useMutation({
-    mutationFn: async (cartItems: CartItem[]): Promise<GenerateFitResponse> => {
+    mutationFn: async (
+      request: GenerateFitRequest
+    ): Promise<GenerateFitResponse> => {
       const response = await fetch('/api/generate-fit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          cartItems,
-        } satisfies GenerateFitRequest),
+        body: JSON.stringify(request satisfies GenerateFitRequest),
       });
 
       if (!response.ok) {
